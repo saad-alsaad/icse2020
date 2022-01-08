@@ -1,3 +1,5 @@
+import os
+
 from iteration_utilities import deepflatten
 from Utils.Hyperopt_doer import optParamCLF, optParamSEQ, optParamAll, optParamAdpt
 from Utils.File import *
@@ -34,6 +36,51 @@ def GetData(filename, showType=False):
             tmp = []
 
             odom = line.strip().split(';')
+            # delete the project information
+            for i in range(3):
+                odom.pop(0)
+
+            for i in range(len(odom)):
+                if is_number(odom[i]):
+                    tmp.append(float(odom[i]))
+                else:
+                    if i not in empty:
+                        empty.append(i)
+                    tmp.append(0)
+
+            if tmp.pop() > 0:
+                y.append(1)
+            else:
+                y.append(-1)
+            x.append(tmp)
+
+        x = np.delete(np.asarray(x), empty, axis=1)
+        empty = sorted(empty)
+        for i in range(len(empty)):
+            type.pop(empty[len(empty) - i - 1])
+
+        if showType:
+            return x, np.asarray(y), type
+        else:
+            return x, np.asarray(y)
+
+    elif 'Bug prediction' in filename:
+        with open(filename, 'r') as f:
+            data = f.readlines()
+        x = []
+        y = []
+        empty = []
+
+        # get the types of metrics from first line
+        type = data[0].strip().split(',')
+        type.pop()
+        type.pop(0)
+
+        # get the detail data of metrics
+        for line in data[1:]:
+            tmp = []
+
+            odom = line.strip().split(',')
             # delete the project information
             for i in range(3):
                 odom.pop(0)
@@ -265,12 +312,13 @@ def normal(xs, xt):
 
 # REPEAT denotes the number of repetition of parameter optimization
 def RunExperiment(Xsource, Lsource, Xtarget, Ltarget, loc, target, adaptation, classifier, mode='adpt', repeat=10,
-                  fe=1000):
+                  fe=1000, count=0):
     fres = create_dir('res' + mode.upper() + '/' + target)
     fp = create_dir('para' + mode.upper() + '/' + target)
 
     if adaptation in ['NNfilter', 'MCWs']:
         # supervised (repeat 10 times)
+        print("supervised")
         for it in range(10):
             train, test, ytrain, ytest = train_test_split(Xtarget, Ltarget, test_size=0.9, random_state=42)
 
@@ -324,12 +372,12 @@ def RunExperiment(Xsource, Lsource, Xtarget, Ltarget, loc, target, adaptation, c
                             best = []
 
                 # print the result into file
-                with open(fres + adaptation + '-' + classifier + '.txt', 'a+') as f:
+                with open('{}{}-{}-process{}.txt'.format(fres, adaptation, classifier, count), 'a+') as f:
                     print(res[i], best, file=f)
                     if i == num - 1:
                         print('-----------------------------------------', file=f)
 
-                with open(fp + adaptation + '-' + classifier + '-' + '.txt', 'a+') as f:
+                with open('{}{}-{}-{}.txt'.format(fp, adaptation, classifier, count), 'a+') as f:
                     for item in his.values():
                         print(item, file=f)
                         if i == num - 1:
@@ -337,6 +385,7 @@ def RunExperiment(Xsource, Lsource, Xtarget, Ltarget, loc, target, adaptation, c
 
     else:
         # un-supervised (just 1 times)
+        print("un-supervised")
         num = repeat
         res = np.zeros((num, 2))
         for i in range(num):
@@ -384,9 +433,9 @@ def RunExperiment(Xsource, Lsource, Xtarget, Ltarget, loc, target, adaptation, c
 
 
             # print the result into file
-            with open(fres + adaptation + '-' + classifier + '.txt', 'a+') as f:
+            with open('{}{}-{}-process{}.txt'.format(fres, adaptation, classifier, count), 'a+') as f:
                 print(res[i], best, file=f)
 
-            with open(fp + adaptation + '-' + classifier + '.txt', 'a+') as f:
+            with open('{}{}-{}-process{}.txt'.format(fp, adaptation, classifier, count), 'a+') as f:
                 for item in his.values():
                     print(item, file=f)

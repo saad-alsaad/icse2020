@@ -1,0 +1,2 @@
+[0.5 0.5] {'DSBFneighbors': 97, 'DSBFtopk': 3}
+[0.5 0.5] {'DSBFneighbors': 22, 'DSBFtopk': 0}

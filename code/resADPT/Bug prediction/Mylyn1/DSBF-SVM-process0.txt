@@ -1,0 +1,11 @@
+[0. 0.] {'DSBFneighbors': 16, 'DSBFtopk': 4}
+[0. 0.] {'DSBFneighbors': 50, 'DSBFtopk': 2}
+[0. 0.] {'DSBFneighbors': 4, 'DSBFtopk': 8}
+[0. 0.] {'DSBFneighbors': 7, 'DSBFtopk': 1}
+[0. 0.] {'DSBFneighbors': 51, 'DSBFtopk': 4}
+[0. 0.] {'DSBFneighbors': 62, 'DSBFtopk': 3}
+[0. 0.] {'DSBFneighbors': 52, 'DSBFtopk': 2}
+[0. 0.] {'DSBFneighbors': 68, 'DSBFtopk': 2}
+[0. 0.] {'DSBFneighbors': 0, 'DSBFtopk': 5}
+[0. 0.] {'DSBFneighbors': 69, 'DSBFtopk': 8}
+[0. 0.] {'DSBFneighbors': 5, 'DSBFtopk': 5}
